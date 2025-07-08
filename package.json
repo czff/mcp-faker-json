@@ -1,0 +1,38 @@
+{
+  "name": "mcp-faker-json",
+  "version": "1.0.0",
+  "description": "mcp服务工具用于根据接口文档mock数据",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsdown"
+  },
+  "keywords": [
+    "mcp",
+    "faker-json",
+    "yapi"
+  ],
+  "author": "陈志峰",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^24.0.10",
+    "tsdown": "^0.12.9",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.15.0",
+    "zod": "^3.25.75"
+  },
+  "files": [
+    "dist",
+    "package.json"
+  ],
+  "engines": {
+    "node": ">=18.16.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/czff/mcp-faker-json"
+  },
+  "sideEffects": false
+}
