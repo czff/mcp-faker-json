@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
-    "build": "tsdown"
+    "build": "tsdown",
+    "serve:fakerjson": "node dist/index.js & npx @modelcontextprotocol/inspector"
   },
   "keywords": [
     "mcp",
