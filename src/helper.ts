@@ -43,12 +43,12 @@ export function extractApiInfo(url: string) {
     // 1. url参数
     let token = urlInfo.searchParams.get("token");
 
-    // 2. 配置文件查找（优先YAPI_TOKEN_CONFIG，否则~/.yapi-token.json）
+    // 2. 配置文件查找（优先YAPI_TOKEN_CONFIG，否则~/yapi-token.json）
     if (!token && projectId) {
       try {
         const configPath =
           process.env.YAPI_TOKEN_CONFIG ||
-          path.join(os.homedir(), ".yapi-token.json");
+          path.join(os.homedir(), "yapi-token.json");
         if (fs.existsSync(configPath)) {
           const configRaw = fs.readFileSync(configPath, "utf-8");
           const config = JSON.parse(configRaw);
