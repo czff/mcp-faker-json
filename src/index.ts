@@ -1,6 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { extractApiInfo, makeYAPIRequest } from "./helper";
+import { extractApiInfo, makeYapiRequest } from "./helper";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import type { YAPIRes } from "./type";
 import { Command } from "commander";
@@ -10,14 +10,13 @@ import os from "node:os";
 
 const program = new Command();
 
-// https://github.com/upstash/context7/blob/master/src/index.ts
 program
   .option(
     "-c, --create",
     "create yapi-token.json file in the current user's home directory path"
   )
   .option("--transport <stdio|sse|http>", "transport type", "stdio")
-  .option("-p, --port <number>", "port for SSE/HTTP transport", "3000")
+  .option("-p, --port <number>", "port for SSE/HTTP transport", "9020")
   .allowUnknownOption() // Avoid other parameter passing errors. such as Vscode
   .parse(process.argv);
 
@@ -27,7 +26,29 @@ const cliOptions = program.opts<{
   port: string;
 }>();
 
-async function createMcpServer() {
+// Validate transport option
+// Avoid errors due to parameter types when executing main functions
+const allowTransports = ["stdio", "sse", "http"];
+if (!allowTransports.includes(cliOptions.transport)) {
+  console.error(
+    `Invalid --transport value: '${cliOptions.transport}'. Must be one of: stdio, sse, http.`
+  );
+  process.exit(1);
+}
+
+// Transport configuration
+const TRANSPORT_TYPE = (cliOptions.transport || "stdio") as
+  | "stdio"
+  | "http"
+  | "sse";
+
+// HTTP/SSE port configuration
+const CLI_PORT = (() => {
+  const parsed = parseInt(cliOptions.port, 10);
+  return isNaN(parsed) ? undefined : parsed;
+})();
+
+async function createStdioMcpServer() {
   const server = new McpServer({
     name: "faker-json",
     version: "1.0.0",
@@ -81,18 +102,25 @@ async function createMcpServer() {
       }
 
       const { origin, apiId, token } = paresdUrl;
-
-      // 构造yapi的请求路径
-      const reqUrl = `${origin}/api/interface/get?id=${apiId}&token=${token}`;
-
-      const yapiApiData = await makeYAPIRequest<YAPIRes>(reqUrl);
+      const yapiApiData = await makeYapiRequest(origin!, apiId!, token!);
 
       if (yapiApiData?.errcode !== 0 || !yapiApiData?.data) {
         return {
           content: [
             {
               type: "text",
-              text: `获取yapi数据失败-reqUrl: ${reqUrl}`,
+              text: `获取yapi数据失败或者文档格式有误, 请检查URL`,
+            },
+          ],
+        };
+      }
+
+      if (!yapiApiData.data.res_body) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: "该接口没有返回值",
             },
           ],
         };
@@ -115,7 +143,22 @@ async function createMcpServer() {
         content: [
           {
             type: "text",
-            text: "请根据以下 schema mock数据。需要注意生成数据的时候的备注，比如：发布类型；1-用户发布，2代发布；无论字段是否必须，都需要生成；如果数据类型是数组，需完整生成十条数据，对应的页码、条数得对应上，其他类型的数据只需生成一条",
+            text: `请根据提供的JSON Schema生成模拟数据，严格遵守以下规则：
+            1. 数据生成要求：
+            - 必须包含所有字段，无论是否标记为必填
+            - 数组类型字段：必须生成完整的10条数据
+            - 非数组字段：仅生成1条数据
+            - 严格遵循字段注释中的枚举值（如'发布类型：1-用户发布，2-代发布'只能生成1或2）
+
+            2. 输出格式：
+            - 保持与Schema完全一致的结构层级和字段名
+            - 为重要字段添加注释且在生成在字段的正上方（如'/** 1-用户发布 */'）
+            - 数组数据需确保分页字段匹配（生成10条数据时page=1, pageSize=10）
+
+            3. 数据质量：
+            - 字段值必须符合实际业务场景
+            - 相同字段在不同生成结果中应保持合理差异
+            - 保持内部一致性（如ID必须唯一）`,
           },
           {
             type: "text",
@@ -127,8 +170,6 @@ async function createMcpServer() {
   );
   const transport = new StdioServerTransport();
   await server.connect(transport);
-
-  console.log("Faker Json Server MCP Server running on stdio");
 }
 
 async function createYapiTokenFile() {
@@ -150,7 +191,10 @@ async function main() {
     createYapiTokenFile();
     return;
   }
-  createMcpServer();
+  if (TRANSPORT_TYPE === "stdio") {
+    await createStdioMcpServer();
+  }
+  console.log("Faker Json Server MCP Server running on stdio");
 }
 
 main().catch((error) => {

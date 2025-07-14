@@ -1,8 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
+import type { YAPIRes } from "./type";
 
-export async function makeYAPIRequest<T>(url: string): Promise<T | null> {
+async function makeRequest<T>(url: string): Promise<T | null> {
   const headers = {
     Accept: "application/json",
   };
@@ -17,6 +18,16 @@ export async function makeYAPIRequest<T>(url: string): Promise<T | null> {
     console.error("Error making YAPI request:", error);
     return null;
   }
+}
+
+export async function makeYapiRequest(
+  origin: string,
+  apiId: string,
+  token: string
+) {
+  // 构造yapi的请求路径
+  const reqUrl = `${origin}/api/interface/get?id=${apiId}&token=${token}`;
+  return await makeRequest<YAPIRes>(reqUrl);
 }
 
 export function extractYapiIds(
