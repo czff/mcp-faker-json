@@ -9,7 +9,8 @@
   },
   "scripts": {
     "build": "tsdown && chmod 755 dist/index.js",
-    "serve": "node dist/index.js & npx @modelcontextprotocol/inspector"
+    "serve": "node dist/index.js & npx @modelcontextprotocol/inspector",
+    "serve:sse": "node dist/index.js --transport=sse & npx @modelcontextprotocol/inspector"
   },
   "keywords": [
     "mcp",
@@ -19,6 +20,7 @@
   "author": "amie",
   "license": "ISC",
   "devDependencies": {
+    "@types/express": "^5.0.3",
     "@types/node": "^24.0.10",
     "tsdown": "^0.12.9",
     "typescript": "^5.8.3"
@@ -26,6 +28,7 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.15.0",
     "commander": "^14.0.0",
+    "express": "^5.1.0",
     "zod": "^3.25.75"
   },
   "files": [

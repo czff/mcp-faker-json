@@ -3,8 +3,11 @@ import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
 import { createStdioMcpServer } from "./transports/stdio";
+import { createSSEMcpServer } from "./transports/sse";
 
 const program = new Command();
+
+const INIT_PORT = 9020;
 
 program
   .option(
@@ -12,7 +15,7 @@ program
     "create yapi-token.json file in the current user's home directory path"
   )
   .option("--transport <stdio|sse|http>", "transport type", "stdio")
-  .option("-p, --port <number>", "port for SSE/HTTP transport", "9020")
+  .option("-p, --port <number>", "port for SSE/HTTP transport", `${INIT_PORT}`)
   .allowUnknownOption() // Avoid other parameter passing errors. such as Vscode
   .parse(process.argv);
 
@@ -38,6 +41,12 @@ const TRANSPORT_TYPE = (cliOptions.transport || "stdio") as
   | "http"
   | "sse";
 
+// HTTP/SSE port configuration
+const CLI_PORT = (() => {
+  const parsed = parseInt(cliOptions.port, 10);
+  return Number.isNaN(parsed) ? undefined : parsed;
+})();
+
 async function createYapiTokenFile() {
   const filePath = path.join(os.homedir(), "yapi-token.json");
   if (fs.existsSync(filePath)) {
@@ -57,9 +66,14 @@ async function main() {
     createYapiTokenFile();
     return;
   }
+
+  const initialPort = CLI_PORT ?? INIT_PORT;
   if (TRANSPORT_TYPE === "stdio") {
     await createStdioMcpServer();
-    console.log("Faker Json Server MCP Server running on stdio");
+    console.log("The current MCP service connection method is stdio");
+  } else if (TRANSPORT_TYPE === "sse") {
+    await createSSEMcpServer(initialPort);
+    console.log("The current MCP service connection method is sse");
   }
 }
 
