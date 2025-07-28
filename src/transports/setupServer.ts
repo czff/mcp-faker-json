@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import z from "zod";
-import { extractApiInfo, makeYapiRequest } from "../helper";
+import { extractInfoFromUrl, makeYapiRequest } from "../helper";
 import { PROMPT_TIPS } from "../constant";
 
 function setupServer(server: McpServer) {
@@ -38,7 +38,7 @@ function setupServer(server: McpServer) {
       },
     },
     async ({ url }) => {
-      const paresdUrl = extractApiInfo(url);
+      const paresdUrl = extractInfoFromUrl(url);
 
       if (paresdUrl.error) {
         return {

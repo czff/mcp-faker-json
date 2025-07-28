@@ -40,7 +40,7 @@ export function extractYapiIds(
   return { projectId, apiId };
 }
 
-export function extractApiInfo(url: string) {
+export function extractInfoFromUrl(url: string) {
   try {
     const urlInfo = new URL(url);
     const { apiId, projectId } = extractYapiIds(urlInfo.pathname) || {};
