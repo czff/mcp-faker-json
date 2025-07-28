@@ -4,6 +4,7 @@ import path from "node:path";
 import os from "node:os";
 import { createStdioMcpServer } from "./transports/stdio";
 import { createSSEMcpServer } from "./transports/sse";
+import { createStreamableHttpServer } from "./transports/streamableHttp";
 
 const program = new Command();
 
@@ -74,6 +75,9 @@ async function main() {
   } else if (TRANSPORT_TYPE === "sse") {
     await createSSEMcpServer(initialPort);
     console.log("The current MCP service connection method is sse");
+  } else if (TRANSPORT_TYPE === "http") {
+    await createStreamableHttpServer(initialPort);
+    console.log("The current MCP service connection method is streamable http");
   }
 }
 
