@@ -10,7 +10,8 @@
   "scripts": {
     "build": "tsdown && chmod 755 dist/index.js",
     "serve": "node dist/index.js & npx @modelcontextprotocol/inspector",
-    "serve:sse": "node dist/index.js --transport=sse & npx @modelcontextprotocol/inspector"
+    "serve:sse": "node dist/index.js --transport=sse & npx @modelcontextprotocol/inspector",
+    "serve:http": "node dist/index.js --transport=http & npx @modelcontextprotocol/inspector"
   },
   "keywords": [
     "mcp",
