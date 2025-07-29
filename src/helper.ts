@@ -25,7 +25,7 @@ export async function makeYapiRequest(
   apiId: string,
   token: string
 ) {
-  // 构造yapi的请求路径
+  // Construct the request path of yapi
   const reqUrl = `${origin}/api/interface/get?id=${apiId}&token=${token}`;
   return await makeRequest<YAPIRes>(reqUrl);
 }
@@ -47,14 +47,16 @@ export function extractInfoFromUrl(url: string) {
     if (!apiId || !urlInfo.origin) {
       return {
         error: true,
-        message: `不合法的URL， 未监测到API ID`,
+        message: `Invalid URL`,
       };
     }
 
-    // 1. url参数
+    // 1. URL
     let token = urlInfo.searchParams.get("token");
 
-    // 2. 配置文件查找（优先YAPI_TOKEN_CONFIG，否则~/yapi-token.json）
+    // 2. The configuration file.
+    // - YAPI_TOKEN_CONFIG
+    // - ~/yapi-token.json
     if (!token && projectId) {
       try {
         const configPath =
@@ -68,11 +70,11 @@ export function extractInfoFromUrl(url: string) {
           }
         }
       } catch (e) {
-        // 配置文件读取失败忽略
+        // Ignore error
       }
     }
 
-    // 3. 环境变量
+    // 3. Environment variable
     if (!token && process.env.YAPI_TOKEN) {
       token = process.env.YAPI_TOKEN;
     }
@@ -80,7 +82,7 @@ export function extractInfoFromUrl(url: string) {
     if (!token) {
       return {
         error: true,
-        message: "未检测到token，请检查URL格式、用户配置文件或环境变量",
+        message: "Invalid token. Please detect your URL",
       };
     }
 

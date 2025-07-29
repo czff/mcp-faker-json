@@ -54,7 +54,7 @@ async function createYapiTokenFile() {
     console.log("The file already exists, no need to create it again");
     process.exit(1);
   } else {
-    fs.writeFileSync(filePath, "{}", "utf-8"); // 写入空 JSON 对象
+    fs.writeFileSync(filePath, "{}", "utf-8"); // Write empty JSON data
     console.log(
       "The file already created\n;mac: ～/yapi-token.json\n;window: C:Users<your user name>yapi-token.json"
     );
