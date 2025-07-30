@@ -16,10 +16,16 @@
   "keywords": [
     "mcp",
     "faker-json",
-    "yapi"
+    "yapi",
+    "mock"
   ],
-  "author": "amie",
-  "license": "ISC",
+  "author": {
+    "name": "amie",
+    "email": "2543415495@qq.com"
+  },
+  "copyright": "Copyright (c) 2025 LaFu Code. All rights reserved.",
+  "license": "MIT",
+  "pricing": "Free",
   "devDependencies": {
     "@types/express": "^5.0.3",
     "@types/node": "^24.0.10",
