@@ -1,5 +1,3 @@
-[toc]
-
 # mcp-faker-json
 
 ## 背景
