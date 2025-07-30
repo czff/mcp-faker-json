@@ -47,7 +47,7 @@
   "mcpServers": {
     "faker-json": {
       "command": "npx",
-      "args": ["-y", "mcp-faker-json"]
+      "args": ["-y", "mcp-faker-json@latest"]
     }
   }
 }
@@ -79,7 +79,7 @@
 
   
 
-- 配置文件（推荐，不同的项目会有不同的token,根据projectId映射token）。环境变量读取配置文件的路径可以偷通过环境变量配置`YAPI_TOKEN_CONFIG`，默认从`path.join(os.homedir(), ".yapi-token.json")`读取。
+- 配置文件（推荐，不同的项目会有不同的token,根据projectId映射token）。环境变量读取配置文件的路径可以通过环境变量配置`YAPI_TOKEN_CONFIG`，默认从`path.join(os.homedir(), ".yapi-token.json")`读取。
   ```json
   {
     "servers": {
