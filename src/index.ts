@@ -49,7 +49,7 @@ const CLI_PORT = (() => {
 })();
 
 async function createYapiTokenFile() {
-  const filePath = path.join(os.homedir(), "yapi-token.json");
+  const filePath = process.env.YAPI_TOKEN_CONFIG || path.join(os.homedir(), "yapi-token.json");
   if (fs.existsSync(filePath)) {
     console.log("The file already exists, no need to create it again");
     process.exit(1);
